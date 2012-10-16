@@ -77,12 +77,12 @@ class Trigger {
 public class HotSwapper {
     //private VirtualMachine jvm;
     //private MethodEntryRequest request;
-    private Map newClassFiles;
+    //private Map newClassFiles;
 
-    private Trigger trigger;
+    //private Trigger trigger;
 
-    private static final String HOST_NAME = "localhost";
-    private static final String TRIGGER_NAME = Trigger.class.getName();
+    //private static final String HOST_NAME = "localhost";
+    //private static final String TRIGGER_NAME = Trigger.class.getName();
 
     /**
      * Connects to the JVM.
@@ -168,7 +168,7 @@ public class HotSwapper {
      *				is <code>String</code> and the type of the
      *				class files is <code>byte[]</code>.
      */
-    public void reload(Map classFiles) {
+    public void reload(Map<?, ?> classFiles) {
 //        Set set = classFiles.entrySet();
 //        Iterator it = set.iterator();
 //        Map map = new HashMap();

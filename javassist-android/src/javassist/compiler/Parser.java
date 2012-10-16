@@ -922,9 +922,8 @@ public final class Parser implements TokenId {
     }
 
     private boolean nextIsBuiltinCast() {
-        int t;
         int i = 2;
-        while ((t = lex.lookAhead(i++)) == '[')
+        while (lex.lookAhead(i++) == '[')
             if (lex.lookAhead(i++) != ']')
                 return false;
 
@@ -949,12 +948,11 @@ public final class Parser implements TokenId {
     }
 
     private int nextIsClassType(int i) {
-        int t;
         while (lex.lookAhead(++i) == '.')
             if (lex.lookAhead(++i) != Identifier)
                 return -1;
 
-        while ((t = lex.lookAhead(i++)) == '[')
+        while (lex.lookAhead(i++) == '[')
             if (lex.lookAhead(i++) != ']')
                 return -1;
 

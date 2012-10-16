@@ -22,6 +22,7 @@ import javassist.compiler.TokenId;
 /**
  * Integer constant.
  */
+@SuppressWarnings("serial")
 public class IntConst extends ASTree {
     protected long value;
     protected int type;

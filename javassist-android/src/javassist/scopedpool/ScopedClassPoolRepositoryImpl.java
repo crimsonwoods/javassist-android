@@ -43,8 +43,8 @@ public class ScopedClassPoolRepositoryImpl implements ScopedClassPoolRepository 
     boolean pruneWhenCached;
 
     /** The registered classloaders */
-    protected Map registeredCLs = Collections
-            .synchronizedMap(new WeakHashMap());
+    protected Map<ClassLoader, ScopedClassPool> registeredCLs = Collections
+            .synchronizedMap(new WeakHashMap<ClassLoader, ScopedClassPool>());
 
     /** The default class pool */
     protected ClassPool classpool;
@@ -132,7 +132,7 @@ public class ScopedClassPoolRepositoryImpl implements ScopedClassPoolRepository 
     /**
      * Get the registered classloaders.
      */
-    public Map getRegisteredCLs() {
+    public Map<ClassLoader, ScopedClassPool> getRegisteredCLs() {
         clearUnregisteredClassLoaders();
         return registeredCLs;
     }
@@ -142,17 +142,17 @@ public class ScopedClassPoolRepositoryImpl implements ScopedClassPoolRepository 
      * undeployed (as in JBoss)
      */
     public void clearUnregisteredClassLoaders() {
-        ArrayList toUnregister = null;
+        ArrayList<ClassLoader> toUnregister = null;
         synchronized (registeredCLs) {
-            Iterator it = registeredCLs.values().iterator();
+            Iterator<ScopedClassPool> it = registeredCLs.values().iterator();
             while (it.hasNext()) {
-                ScopedClassPool pool = (ScopedClassPool)it.next();
+                ScopedClassPool pool = it.next();
                 if (pool.isUnloadedClassLoader()) {
                     it.remove();
                     ClassLoader cl = pool.getClassLoader();
                     if (cl != null) {
                         if (toUnregister == null) {
-                            toUnregister = new ArrayList();
+                            toUnregister = new ArrayList<ClassLoader>();
                         }
                         toUnregister.add(cl);
                     }

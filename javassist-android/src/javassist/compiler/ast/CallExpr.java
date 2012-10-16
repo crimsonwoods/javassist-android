@@ -23,6 +23,7 @@ import javassist.compiler.MemberResolver;
 /**
  * Method call expression.
  */
+@SuppressWarnings("serial")
 public class CallExpr extends Expr {
     private MemberResolver.Method method;  // cached result of lookupMethod()
 

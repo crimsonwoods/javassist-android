@@ -19,6 +19,7 @@ package javassist.compiler;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
 
+@SuppressWarnings("serial")
 public class CompileError extends Exception {
     private Lex lex;
     private String reason;

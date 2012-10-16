@@ -18,6 +18,7 @@ package javassist.compiler.ast;
 
 import javassist.compiler.CompileError;
 
+@SuppressWarnings("serial")
 public class FieldDecl extends ASTList {
     public FieldDecl(ASTree _head, ASTList _tail) {
         super(_head, _tail);

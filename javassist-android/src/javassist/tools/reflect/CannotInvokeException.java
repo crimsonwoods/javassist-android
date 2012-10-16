@@ -27,6 +27,7 @@ import java.lang.IllegalAccessException;
  * @see javassist.tools.reflect.ClassMetaobject#trapMethodcall(int, Object[])
  * @see javassist.tools.reflect.ClassMetaobject#invoke(Object, int, Object[])
  */
+@SuppressWarnings("serial")
 public class CannotInvokeException extends RuntimeException {
 
     private Throwable err = null;

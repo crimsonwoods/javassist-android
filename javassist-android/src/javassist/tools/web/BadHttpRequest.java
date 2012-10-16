@@ -19,6 +19,7 @@ package javassist.tools.web;
 /**
  * Thrown when receiving an invalid HTTP request.
  */
+@SuppressWarnings("serial")
 public class BadHttpRequest extends Exception {
     private Exception e;
 

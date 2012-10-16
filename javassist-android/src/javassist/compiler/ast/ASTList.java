@@ -22,6 +22,7 @@ import javassist.compiler.CompileError;
  * A linked list.
  * The right subtree must be an ASTList object or null.
  */
+@SuppressWarnings("serial")
 public class ASTList extends ASTree {
     private ASTree left;
     private ASTList right;

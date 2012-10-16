@@ -99,7 +99,7 @@ public class MemberResolver implements TokenId {
         // If the class is an array type, the class file is null.
         // If so, search the super class java.lang.Object for clone() etc.
         if (cf != null) {
-            List list = cf.getMethods();
+            List<MethodInfo> list = cf.getMethods();
             int n = list.size();
             for (int i = 0; i < n; ++i) {
                 MethodInfo minfo = (MethodInfo)list.get(i);
@@ -394,7 +394,7 @@ public class MemberResolver implements TokenId {
     public CtClass lookupClass(String name, boolean notCheckInner)
         throws CompileError
     {
-        Hashtable cache = getInvalidNames();
+        Hashtable<String, Object> cache = getInvalidNames();
         Object found = cache.get(name);
         if (found == INVALID)
             throw new CompileError("no such class: " + name);
@@ -414,23 +414,23 @@ public class MemberResolver implements TokenId {
     }
 
     private static final String INVALID = "<invalid>";
-    private static WeakHashMap invalidNamesMap = new WeakHashMap();
-    private Hashtable invalidNames = null;
+    private static WeakHashMap<ClassPool, WeakReference<Hashtable<String, Object>>> invalidNamesMap = new WeakHashMap<ClassPool, WeakReference<Hashtable<String, Object>>>();
+    private Hashtable<String, Object> invalidNames = null;
 
     // for unit tests
     public static int getInvalidMapSize() { return invalidNamesMap.size(); }
 
-    private Hashtable getInvalidNames() {
-        Hashtable ht = invalidNames;
+    private Hashtable<String, Object> getInvalidNames() {
+        Hashtable<String, Object> ht = invalidNames;
         if (ht == null) {
             synchronized (MemberResolver.class) {
-                WeakReference ref = (WeakReference)invalidNamesMap.get(classPool);
+                WeakReference<Hashtable<String, Object>> ref = (WeakReference<Hashtable<String, Object>>)invalidNamesMap.get(classPool);
                 if (ref != null)
-                    ht = (Hashtable)ref.get();
+                    ht = ref.get();
 
                 if (ht == null) {
-                    ht = new Hashtable();
-                    invalidNamesMap.put(classPool, new WeakReference(ht));
+                    ht = new Hashtable<String, Object>();
+                    invalidNamesMap.put(classPool, new WeakReference<Hashtable<String, Object>>(ht));
                 }
             }
 
@@ -444,9 +444,9 @@ public class MemberResolver implements TokenId {
         throws CompileError
     {
         if (orgName.indexOf('.') < 0) {
-            Iterator it = classPool.getImportedPackages();
+            Iterator<String> it = classPool.getImportedPackages();
             while (it.hasNext()) {
-                String pac = (String)it.next();
+                String pac = it.next();
                 String fqName = pac + '.' + orgName;
                 try {
                     return classPool.get(fqName);

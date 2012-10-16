@@ -190,14 +190,13 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
     protected void atMultiNewArray(int type, ASTList classname, ASTList size)
         throws CompileError
     {
-        int count, dim;
+        int dim;
         dim = size.length();
-        for (count = 0; size != null; size = size.tail()) {
+        for (; size != null; size = size.tail()) {
             ASTree s = size.head();
             if (s == null)
                 break;          // int[][][] a = new int[3][4][];
 
-            ++count;
             s.accept(this);
         }
 
@@ -284,7 +283,6 @@ public class TypeChecker extends Visitor implements Opcode, TokenId {
         expr.thenExpr().accept(this);
         int type1 = exprType;
         int dim1 = arrayDim;
-        String cname1 = className;
         expr.elseExpr().accept(this);
 
         if (dim1 == 0 && dim1 == arrayDim)

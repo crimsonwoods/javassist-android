@@ -37,8 +37,8 @@ import java.util.Vector;
  */
 public class AppletServer extends Webserver {
     private StubGenerator stubGen;
-    private Hashtable exportedNames;
-    private Vector exportedObjects;
+    private Hashtable<String, ExportedObject> exportedNames;
+    private Vector<ExportedObject> exportedObjects;
 
     private static final byte[] okHeader
                                 = "HTTP/1.0 200 OK\r\n\r\n".getBytes();
@@ -81,8 +81,8 @@ public class AppletServer extends Webserver {
         throws IOException, NotFoundException, CannotCompileException
     {
         super(port);
-        exportedNames = new Hashtable();
-        exportedObjects = new Vector();
+        exportedNames = new Hashtable<String, ExportedObject>();
+        exportedObjects = new Vector<ExportedObject>();
         stubGen = gen;
         addTranslator(loader, gen);
     }
@@ -109,7 +109,7 @@ public class AppletServer extends Webserver {
     public synchronized int exportObject(String name, Object obj)
         throws CannotCompileException
     {
-        Class clazz = obj.getClass();
+        Class<?> clazz = obj.getClass();
         ExportedObject eo = new ExportedObject();
         eo.object = obj;
         eo.methods = clazz.getMethods();

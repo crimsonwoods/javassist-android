@@ -47,7 +47,7 @@ public abstract class CodeGen extends Visitor implements Opcode, TokenId {
      */
     public boolean inStaticMethod;
 
-    protected ArrayList breakList, continueList;
+    protected ArrayList<Integer> breakList, continueList;
 
     /**
      * doit() in ReturnHook is called from atReturn().
@@ -411,10 +411,10 @@ public abstract class CodeGen extends Visitor implements Opcode, TokenId {
     }
 
     private void atWhileStmnt(Stmnt st, boolean notDo) throws CompileError {
-        ArrayList prevBreakList = breakList;
-        ArrayList prevContList = continueList;
-        breakList = new ArrayList();
-        continueList = new ArrayList();
+        ArrayList<Integer> prevBreakList = breakList;
+        ArrayList<Integer> prevContList = continueList;
+        breakList = new ArrayList<Integer>();
+        continueList = new ArrayList<Integer>();
 
         ASTree expr = st.head();
         Stmnt body = (Stmnt)st.tail();
@@ -444,19 +444,19 @@ public abstract class CodeGen extends Visitor implements Opcode, TokenId {
         hasReturned = alwaysBranch;
     }
 
-    protected void patchGoto(ArrayList list, int targetPc) {
+    protected void patchGoto(ArrayList<Integer> list, int targetPc) {
         int n = list.size();
         for (int i = 0; i < n; ++i) {
-            int pc = ((Integer)list.get(i)).intValue();
+            int pc = list.get(i).intValue();
             bytecode.write16bit(pc, targetPc - pc + 1);
         }
     }
 
     private void atForStmnt(Stmnt st) throws CompileError {
-        ArrayList prevBreakList = breakList;
-        ArrayList prevContList = continueList;
-        breakList = new ArrayList();
-        continueList = new ArrayList();
+        ArrayList<Integer> prevBreakList = breakList;
+        ArrayList<Integer> prevContList = continueList;
+        breakList = new ArrayList<Integer>();
+        continueList = new ArrayList<Integer>();
 
         Stmnt init = (Stmnt)st.head();
         ASTList p = st.tail();
@@ -500,8 +500,8 @@ public abstract class CodeGen extends Visitor implements Opcode, TokenId {
     private void atSwitchStmnt(Stmnt st) throws CompileError {
         compileExpr(st.head());
 
-        ArrayList prevBreakList = breakList;
-        breakList = new ArrayList();
+        ArrayList<Integer> prevBreakList = breakList;
+        breakList = new ArrayList<Integer>();
         int opcodePc = bytecode.currentPc();
         bytecode.addOpcode(LOOKUPSWITCH);
         int npads = 3 - (opcodePc & 3);
@@ -578,7 +578,7 @@ public abstract class CodeGen extends Visitor implements Opcode, TokenId {
                         "sorry, not support labeled break or continue");
 
         bytecode.addOpcode(Opcode.GOTO);
-        Integer pc = new Integer(bytecode.currentPc());
+        Integer pc = Integer.valueOf(bytecode.currentPc());
         bytecode.addIndex(0);
         if (notCont)
             breakList.add(pc);
@@ -694,7 +694,7 @@ public abstract class CodeGen extends Visitor implements Opcode, TokenId {
                 "sorry, cannot break/continue in synchronized block");
     }
 
-    private static int getListSize(ArrayList list) {
+    private static int getListSize(ArrayList<?> list) {
         return list == null ? 0 : list.size();
     }
 

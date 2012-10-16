@@ -17,6 +17,7 @@
 package javassist.tools.rmi;
 
 import javassist.*;
+
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 import javassist.CtMethod.ConstParameter;
@@ -47,7 +48,7 @@ public class StubGenerator implements Translator {
     private static final String sampleClass = "javassist.tools.rmi.Sample";
 
     private ClassPool classPool;
-    private Hashtable proxyClasses;
+    private Hashtable<String, CtClass> proxyClasses;
     private CtMethod forwardMethod;
     private CtMethod forwardStaticMethod;
 
@@ -59,7 +60,7 @@ public class StubGenerator implements Translator {
      * Constructs a stub-code generator.
      */
     public StubGenerator() {
-        proxyClasses = new Hashtable();
+        proxyClasses = new Hashtable<String, CtClass>();
     }
 
     /**
@@ -110,7 +111,7 @@ public class StubGenerator implements Translator {
      * @return          <code>false</code> if the proxy class
      *                  has been already produced.
      */
-    public synchronized boolean makeProxyClass(Class clazz)
+    public synchronized boolean makeProxyClass(Class<?> clazz)
         throws CannotCompileException, NotFoundException
     {
         String classname = clazz.getName();
@@ -125,7 +126,7 @@ public class StubGenerator implements Translator {
         }
     }
 
-    private CtClass produceProxyClass(CtClass orgclass, Class orgRtClass)
+    private CtClass produceProxyClass(CtClass orgclass, Class<?> orgRtClass)
         throws CannotCompileException, NotFoundException
     {
         int modify = orgclass.getModifiers();
@@ -166,7 +167,7 @@ public class StubGenerator implements Translator {
         }
     }
 
-    private CtClass toCtClass(Class rtclass) throws NotFoundException {
+    private CtClass toCtClass(Class<?> rtclass) throws NotFoundException {
         String name;
         if (!rtclass.isArray())
             name = rtclass.getName();
@@ -183,7 +184,7 @@ public class StubGenerator implements Translator {
         return classPool.get(name);
     }
 
-    private CtClass[] toCtClass(Class[] rtclasses) throws NotFoundException {
+    private CtClass[] toCtClass(Class<?>[] rtclasses) throws NotFoundException {
         int n = rtclasses.length;
         CtClass[] ctclasses = new CtClass[n];
         for (int i = 0; i < n; ++i)

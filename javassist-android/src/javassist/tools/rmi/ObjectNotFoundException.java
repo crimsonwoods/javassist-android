@@ -16,6 +16,7 @@
 
 package javassist.tools.rmi;
 
+@SuppressWarnings("serial")
 public class ObjectNotFoundException extends Exception {
     public ObjectNotFoundException(String name) {
         super(name + " is not exported");

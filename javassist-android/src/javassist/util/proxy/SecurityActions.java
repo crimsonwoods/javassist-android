@@ -25,41 +25,41 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
 class SecurityActions {
-    static Method[] getDeclaredMethods(final Class clazz) {
+    static Method[] getDeclaredMethods(final Class<?> clazz) {
         if (System.getSecurityManager() == null)
             return clazz.getDeclaredMethods();
         else {
-            return (Method[]) AccessController
-                    .doPrivileged(new PrivilegedAction() {
-                        public Object run() {
+            return AccessController
+                    .doPrivileged(new PrivilegedAction<Method[]>() {
+                        public Method[] run() {
                             return clazz.getDeclaredMethods();
                         }
                     });
         }
     }
 
-    static Constructor[] getDeclaredConstructors(final Class clazz) {
+    static Constructor<?>[] getDeclaredConstructors(final Class<?> clazz) {
         if (System.getSecurityManager() == null)
             return clazz.getDeclaredConstructors();
         else {
-            return (Constructor[]) AccessController
-                    .doPrivileged(new PrivilegedAction() {
-                        public Object run() {
+            return AccessController
+                    .doPrivileged(new PrivilegedAction<Constructor<?>[]>() {
+                        public Constructor<?>[] run() {
                             return clazz.getDeclaredConstructors();
                         }
                     });
         }
     }
 
-    static Method getDeclaredMethod(final Class clazz, final String name,
-            final Class[] types) throws NoSuchMethodException {
+    static Method getDeclaredMethod(final Class<?> clazz, final String name,
+            final Class<?>[] types) throws NoSuchMethodException {
         if (System.getSecurityManager() == null)
             return clazz.getDeclaredMethod(name, types);
         else {
             try {
-                return (Method) AccessController
-                        .doPrivileged(new PrivilegedExceptionAction() {
-                            public Object run() throws Exception {
+                return AccessController
+                        .doPrivileged(new PrivilegedExceptionAction<Method>() {
+                            public Method run() throws Exception {
                                 return clazz.getDeclaredMethod(name, types);
                             }
                         });
@@ -73,17 +73,17 @@ class SecurityActions {
         }
     }
 
-    static Constructor getDeclaredConstructor(final Class clazz,
-                                              final Class[] types)
+    static Constructor<?> getDeclaredConstructor(final Class<?> clazz,
+                                              final Class<?>[] types)
         throws NoSuchMethodException
     {
         if (System.getSecurityManager() == null)
             return clazz.getDeclaredConstructor(types);
         else {
             try {
-                return (Constructor) AccessController
-                        .doPrivileged(new PrivilegedExceptionAction() {
-                            public Object run() throws Exception {
+                return AccessController
+                        .doPrivileged(new PrivilegedExceptionAction<Constructor<?>>() {
+                            public Constructor<?> run() throws Exception {
                                 return clazz.getDeclaredConstructor(types);
                             }
                         });
@@ -102,7 +102,7 @@ class SecurityActions {
         if (System.getSecurityManager() == null)
             ao.setAccessible(accessible);
         else {
-            AccessController.doPrivileged(new PrivilegedAction() {
+            AccessController.doPrivileged(new PrivilegedAction<Object>() {
                 public Object run() {
                     ao.setAccessible(accessible);
                     return null;
@@ -118,7 +118,7 @@ class SecurityActions {
             fld.set(target, value);
         else {
             try {
-                AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
                     public Object run() throws Exception {
                         fld.set(target, value);
                         return null;

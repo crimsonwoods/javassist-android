@@ -23,7 +23,13 @@ package javassist.runtime;
  *
  * @see javassist.CtBehavior#useCflow(String)
  */
-public class Cflow extends ThreadLocal {
+public class Cflow {
+	private final ThreadLocal<Cflow.Depth> local = new ThreadLocal<Cflow.Depth>() {
+		protected synchronized Depth initialValue() {
+			return new Depth();
+		};
+	};
+	
     private static class Depth {
         private int depth;
         Depth() { depth = 0; }
@@ -32,22 +38,18 @@ public class Cflow extends ThreadLocal {
         void dec() { --depth; }
     }
 
-    protected synchronized Object initialValue() {
-        return new Depth();
-    }
-
     /**
      * Increments the counter.
      */
-    public void enter() { ((Depth)get()).inc(); }
+    public void enter() { local.get().inc(); }
 
     /**
      * Decrements the counter.
      */
-    public void exit() { ((Depth)get()).dec(); }
+    public void exit() { local.get().dec(); }
 
     /**
      * Returns the value of the counter.
      */
-    public int value() { return ((Depth)get()).get(); }
+    public int value() { return local.get().get(); }
 }

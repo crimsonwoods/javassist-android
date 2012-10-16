@@ -18,6 +18,7 @@ package javassist.compiler;
 
 import javassist.compiler.ast.ASTree;
 
+@SuppressWarnings("serial")
 public class NoFieldException extends CompileError {
     private String fieldName;
     private ASTree expr;

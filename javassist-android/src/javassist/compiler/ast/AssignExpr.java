@@ -21,6 +21,7 @@ import javassist.compiler.CompileError;
 /**
  * Assignment expression.
  */
+@SuppressWarnings("serial")
 public class AssignExpr extends Expr {
     /* operator must be either of:
      * =, %=, &=, *=, +=, -=, /=, ^=, |=, <<=, >>=, >>>=

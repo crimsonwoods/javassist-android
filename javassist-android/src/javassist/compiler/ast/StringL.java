@@ -21,6 +21,7 @@ import javassist.compiler.CompileError;
 /**
  * String literal.
  */
+@SuppressWarnings("serial")
 public class StringL extends ASTree {
     protected String text;
 

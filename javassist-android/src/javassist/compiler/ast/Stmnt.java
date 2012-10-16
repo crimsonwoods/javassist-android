@@ -22,6 +22,7 @@ import javassist.compiler.CompileError;
 /**
  * Statement.
  */
+@SuppressWarnings("serial")
 public class Stmnt extends ASTList implements TokenId {
     protected int operatorId;
 

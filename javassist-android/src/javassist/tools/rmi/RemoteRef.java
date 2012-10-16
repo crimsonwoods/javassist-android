@@ -20,6 +20,7 @@ package javassist.tools.rmi;
  * Remote reference.  This class is internally used for sending a remote
  * reference through a network stream.
  */
+@SuppressWarnings("serial")
 public class RemoteRef implements java.io.Serializable {
     public int oid;
     public String classname;

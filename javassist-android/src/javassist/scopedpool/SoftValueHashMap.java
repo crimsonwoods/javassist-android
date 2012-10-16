@@ -18,8 +18,9 @@ package javassist.scopedpool;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
-import java.util.AbstractMap;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,44 +31,74 @@ import java.util.Set;
  * @version <tt>$Revision: 1.4 $</tt>
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  */
-public class SoftValueHashMap extends AbstractMap implements Map {
-    private static class SoftValueRef extends SoftReference {
-        public Object key;
+public class SoftValueHashMap<K, V> implements Map<K, V> {
+    private class SoftValueRef extends SoftReference<V> {
+        public K key;
 
-        private SoftValueRef(Object key, Object val, ReferenceQueue q) {
+        private SoftValueRef(K key, V val, ReferenceQueue<V> q) {
             super(val, q);
             this.key = key;
         }
-
-        private static SoftValueRef create(Object key, Object val,
-                ReferenceQueue q) {
-            if (val == null)
-                return null;
-            else
-                return new SoftValueRef(key, val, q);
-        }
-
+    }
+    
+    private SoftValueRef create(K key, V val,
+            ReferenceQueue<V> q) {
+        if (val == null)
+            return null;
+        else
+            return new SoftValueRef(key, val, q);
     }
 
+    private class InnerEntry implements Map.Entry<K, V> {
+    	private K key;
+    	private V value;
+    	
+    	private InnerEntry(K k, V v) {
+    		this.key = k;
+    		this.value = v;
+    	}
+		@Override
+		public K getKey() {
+			return key;
+		}
+
+		@Override
+		public V getValue() {
+			return value;
+		}
+
+		@Override
+		public V setValue(V object) {
+			V old = this.value;
+			this.value = object;
+			return old;
+		}
+    }
+    
     /**
      * Returns a set of the mappings contained in this hash table.
      */
-    public Set entrySet() {
+    public Set<Entry<K, V>> entrySet() {
         processQueue();
-        return hash.entrySet();
+        final HashSet<Entry<K, V>> set = new HashSet<Entry<K, V>>();
+        for (Entry<K, SoftValueRef> e : hash.entrySet()) {
+        	set.add(new InnerEntry(e.getKey(), e.getValue().get()));
+        }
+        return set;
     }
 
     /* Hash table mapping WeakKeys to values */
-    private Map hash;
+    private Map<K, SoftValueRef> hash;
 
     /* Reference queue for cleared WeakKeys */
-    private ReferenceQueue queue = new ReferenceQueue();
+    private ReferenceQueue<V> queue = new ReferenceQueue<V>();
 
     /*
      * Remove all invalidated entries from the map, that is, remove all entries
      * whose values have been discarded.
      */
-    private void processQueue() {
+    @SuppressWarnings("unchecked")
+	private void processQueue() {
         SoftValueRef ref;
         while ((ref = (SoftValueRef)queue.poll()) != null) {
             if (ref == (SoftValueRef)hash.get(ref.key)) {
@@ -95,7 +126,7 @@ public class SoftValueHashMap extends AbstractMap implements Map {
      *             factor is nonpositive
      */
     public SoftValueHashMap(int initialCapacity, float loadFactor) {
-        hash = new HashMap(initialCapacity, loadFactor);
+        hash = new HashMap<K, SoftValueRef>(initialCapacity, loadFactor);
     }
 
     /**
@@ -109,7 +140,7 @@ public class SoftValueHashMap extends AbstractMap implements Map {
      *             If the initial capacity is less than zero
      */
     public SoftValueHashMap(int initialCapacity) {
-        hash = new HashMap(initialCapacity);
+        hash = new HashMap<K, SoftValueRef>(initialCapacity);
     }
 
     /**
@@ -117,7 +148,7 @@ public class SoftValueHashMap extends AbstractMap implements Map {
      * initial capacity and the default load factor, which is <code>0.75</code>.
      */
     public SoftValueHashMap() {
-        hash = new HashMap();
+        hash = new HashMap<K, SoftValueRef>();
     }
 
     /**
@@ -129,7 +160,7 @@ public class SoftValueHashMap extends AbstractMap implements Map {
      * 
      * @param t     the map whose mappings are to be placed in this map.
      */
-    public SoftValueHashMap(Map t) {
+    public SoftValueHashMap(Map<K, V> t) {
         this(Math.max(2 * t.size(), 11), 0.75f);
         putAll(t);
     }
@@ -177,9 +208,9 @@ public class SoftValueHashMap extends AbstractMap implements Map {
      * @param key
      *            The key whose associated value, if any, is to be returned.
      */
-    public Object get(Object key) {
+	public V get(Object key) {
         processQueue();
-        SoftReference ref = (SoftReference)hash.get(key);
+        SoftReference<V> ref = (SoftReference<V>)hash.get(key);
         if (ref != null)
             return ref.get();
         return null;
@@ -200,12 +231,12 @@ public class SoftValueHashMap extends AbstractMap implements Map {
      * @return The previous value to which this key was mapped, or
      *         <code>null</code> if if there was no mapping for the key
      */
-    public Object put(Object key, Object value) {
+	public V put(K key, V value) {
         processQueue();
-        Object rtn = hash.put(key, SoftValueRef.create(key, value, queue));
+        SoftValueRef rtn = hash.put(key, create(key, value, queue));
         if (rtn != null)
-            rtn = ((SoftReference)rtn).get();
-        return rtn;
+            return rtn.get();
+        return null;
     }
 
     /**
@@ -218,9 +249,12 @@ public class SoftValueHashMap extends AbstractMap implements Map {
      * @return The value to which this key was mapped, or <code>null</code> if
      *         there was no mapping for the key.
      */
-    public Object remove(Object key) {
+    public V remove(Object key) {
         processQueue();
-        return hash.remove(key);
+        SoftValueRef ref = hash.remove(key);
+        if (null != ref)
+        	return ref.get();
+        return null;
     }
 
     /**
@@ -230,4 +264,30 @@ public class SoftValueHashMap extends AbstractMap implements Map {
         processQueue();
         hash.clear();
     }
+
+	@Override
+	public boolean containsValue(Object value) {
+		return hash.containsValue(value);
+	}
+
+	@Override
+	public Set<K> keySet() {
+		return hash.keySet();
+	}
+
+	@Override
+	public void putAll(Map<? extends K, ? extends V> arg0) {
+		for (Entry<? extends K,? extends V> e : arg0.entrySet()) {
+			put(e.getKey(), e.getValue());
+		}
+	}
+
+	@Override
+	public Collection<V> values() {
+		final HashSet<V> set = new HashSet<V>();
+		for (SoftValueRef v : hash.values()) {
+			set.add(v.get());
+		}
+		return set;
+	}
 }

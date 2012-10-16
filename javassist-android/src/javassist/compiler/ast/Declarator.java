@@ -22,6 +22,7 @@ import javassist.compiler.CompileError;
 /**
  * Variable declarator.
  */
+@SuppressWarnings("serial")
 public class Declarator extends ASTList implements TokenId {
     protected int varType;
     protected int arrayDim;

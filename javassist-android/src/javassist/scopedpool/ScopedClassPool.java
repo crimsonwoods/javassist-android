@@ -37,11 +37,11 @@ import javassist.NotFoundException;
 public class ScopedClassPool extends ClassPool {
     protected ScopedClassPoolRepository repository;
 
-    protected WeakReference classLoader;
+    protected WeakReference<ClassLoader> classLoader;
 
     protected LoaderClassPath classPath;
 
-    protected SoftValueHashMap softcache = new SoftValueHashMap();
+    protected SoftValueHashMap<String, CtClass> softcache = new SoftValueHashMap<String, CtClass>();
     
     boolean isBootstrapCl = true;
 
@@ -82,7 +82,7 @@ public class ScopedClassPool extends ClassPool {
     {
        super(src);
        this.repository = repository;
-       this.classLoader = new WeakReference(cl);
+       this.classLoader = new WeakReference<ClassLoader>(cl);
        if (cl != null) {
            classPath = new LoaderClassPath(cl);
            this.insertClassPath(classPath);
@@ -186,11 +186,11 @@ public class ScopedClassPool extends ClassPool {
             }
 
             if (!isLocal) {
-                Map registeredCLs = repository.getRegisteredCLs();
+                Map<ClassLoader, ScopedClassPool> registeredCLs = repository.getRegisteredCLs();
                 synchronized (registeredCLs) {
-                    Iterator it = registeredCLs.values().iterator();
+                    Iterator<ScopedClassPool> it = registeredCLs.values().iterator();
                     while (it.hasNext()) {
-                        ScopedClassPool pool = (ScopedClassPool)it.next();
+                        ScopedClassPool pool = it.next();
                         if (pool.isUnloadedClassLoader()) {
                             repository.unregisterClassLoader(pool
                                     .getClassLoader());
@@ -289,7 +289,7 @@ public class ScopedClassPool extends ClassPool {
      * @throws CannotCompileException
      *             for any error
      */
-    public Class toClass(CtClass ct, ClassLoader loader, ProtectionDomain domain)
+    public Class<?> toClass(CtClass ct, ClassLoader loader, ProtectionDomain domain)
             throws CannotCompileException {
         // We need to pass up the classloader stored in this pool, as the
         // default implementation uses the Thread context cl.

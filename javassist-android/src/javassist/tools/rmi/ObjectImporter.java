@@ -72,6 +72,7 @@ import java.lang.reflect.*;
  * @see javassist.tools.rmi.RemoteException
  * @see javassist.tools.web.Viewer
  */
+@SuppressWarnings("serial")
 public class ObjectImporter implements java.io.Serializable {
     private final byte[] endofline = { 0x0d, 0x0a };
     private String servername, orgServername;
@@ -183,13 +184,13 @@ public class ObjectImporter implements java.io.Serializable {
         throw new ObjectNotFoundException(name);
     }
 
-    private static final Class[] proxyConstructorParamTypes
+    private static final Class<?>[] proxyConstructorParamTypes
         = new Class[] { ObjectImporter.class, int.class };
 
     private Object createProxy(int oid, String classname) throws Exception {
-        Class c = Class.forName(classname);
-        Constructor cons = c.getConstructor(proxyConstructorParamTypes);
-        return cons.newInstance(new Object[] { this, new Integer(oid) });
+        Class<?> c = Class.forName(classname);
+        Constructor<?> cons = c.getConstructor(proxyConstructorParamTypes);
+        return cons.newInstance(new Object[] { this, Integer.valueOf(oid) });
     }
 
     /**

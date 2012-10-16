@@ -21,7 +21,6 @@ import java.io.ObjectStreamException;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.security.ProtectionDomain;
 
 /**
  * A proxy object is converted into an instance of this class
@@ -29,17 +28,18 @@ import java.security.ProtectionDomain;
  *
  * @see RuntimeSupport#makeSerializedProxy(Object)
  */
+@SuppressWarnings("serial")
 class SerializedProxy implements Serializable {
     private String superClass;
     private String[] interfaces;
     private byte[] filterSignature;
     private MethodHandler handler;
 
-    SerializedProxy(Class proxy, byte[] sig, MethodHandler h) {
+    SerializedProxy(Class<?> proxy, byte[] sig, MethodHandler h) {
         filterSignature = sig;
         handler = h;
         superClass = proxy.getSuperclass().getName();
-        Class[] infs = proxy.getInterfaces();
+        Class<?>[] infs = proxy.getInterfaces();
         int n = infs.length;
         interfaces = new String[n - 1];
         String setterInf = ProxyObject.class.getName();
@@ -58,10 +58,10 @@ class SerializedProxy implements Serializable {
      * @return loaded class
      * @throws ClassNotFoundException for any error
      */
-    protected Class loadClass(final String className) throws ClassNotFoundException {
+    protected Class<?> loadClass(final String className) throws ClassNotFoundException {
         try {
-            return (Class)AccessController.doPrivileged(new PrivilegedExceptionAction(){
-                public Object run() throws Exception{
+            return AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>(){
+                public Class<?> run() throws Exception{
                     ClassLoader cl = Thread.currentThread().getContextClassLoader();
                     return Class.forName(className, true, cl);
                 }
@@ -75,7 +75,7 @@ class SerializedProxy implements Serializable {
     Object readResolve() throws ObjectStreamException {
         try {
             int n = interfaces.length;
-            Class[] infs = new Class[n];
+            Class<?>[] infs = new Class[n];
             for (int i = 0; i < n; i++)
                 infs[i] = loadClass(interfaces[i]);
 

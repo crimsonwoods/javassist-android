@@ -20,6 +20,7 @@ package javassist.tools.rmi;
  * <code>RemoteException</code> represents any exception thrown
  * during remote method invocation.
  */
+@SuppressWarnings("serial")
 public class RemoteException extends RuntimeException {
     public RemoteException(String msg) {
         super(msg);

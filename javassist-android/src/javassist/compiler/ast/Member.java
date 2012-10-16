@@ -22,6 +22,7 @@ import javassist.CtField;
 /**
  * Member name.
  */
+@SuppressWarnings("serial")
 public class Member extends Symbol {
     // cache maintained by fieldAccess() in TypeChecker.
     // this is used to obtain the value of a static final field.

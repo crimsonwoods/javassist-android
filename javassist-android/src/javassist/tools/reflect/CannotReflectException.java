@@ -28,6 +28,7 @@ import javassist.CannotCompileException;
  * @see javassist.tools.reflect.Reflection#makeReflective(CtClass,CtClass,CtClass)
  * @see javassist.CannotCompileException
  */
+@SuppressWarnings("serial")
 public class CannotReflectException extends CannotCompileException {
     public CannotReflectException(String msg) {
         super(msg);

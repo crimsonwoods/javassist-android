@@ -16,7 +16,8 @@
 
 package javassist.compiler;
 
-public final class KeywordTable extends java.util.HashMap {
+@SuppressWarnings("serial")
+public final class KeywordTable extends java.util.HashMap<String, Integer> {
     public KeywordTable() { super(); }
 
     public int lookup(String name) {
@@ -28,6 +29,6 @@ public final class KeywordTable extends java.util.HashMap {
     }
 
     public void append(String name, int t) {
-        put(name, new Integer(t));
+        put(name, Integer.valueOf(t));
     }
 }

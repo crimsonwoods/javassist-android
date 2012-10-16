@@ -132,7 +132,7 @@ public abstract class Expr implements Opcode {
     public CtClass[] mayThrow() {
         ClassPool pool = thisClass.getClassPool();
         ConstPool cp = thisMethod.getConstPool();
-        LinkedList list = new LinkedList();
+        LinkedList<CtClass> list = new LinkedList<CtClass>();
         try {
             CodeAttribute ca = thisMethod.getCodeAttribute();
             ExceptionTable et = ca.getExceptionTable();
@@ -166,11 +166,11 @@ public abstract class Expr implements Opcode {
             }
         }
 
-        return (CtClass[])list.toArray(new CtClass[list.size()]);
+        return list.toArray(new CtClass[list.size()]);
     }
 
-    private static void addClass(LinkedList list, CtClass c) {
-        Iterator it = list.iterator();
+    private static void addClass(LinkedList<CtClass> list, CtClass c) {
+        Iterator<CtClass> it = list.iterator();
         while (it.hasNext())
             if (it.next() == c)
                 return;

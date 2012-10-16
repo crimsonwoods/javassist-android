@@ -22,6 +22,7 @@ import javassist.compiler.CompileError;
  * A node of a a binary tree.  This class provides concrete methods
  * overriding abstract methods in ASTree.
  */
+@SuppressWarnings("serial")
 public class Pair extends ASTree {
     protected ASTree left, right;
 

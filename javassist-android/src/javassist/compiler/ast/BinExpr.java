@@ -24,6 +24,7 @@ import javassist.compiler.CompileError;
  * <p>If the operator is +, the right node might be null.
  * See TypeChecker.atBinExpr().
  */
+@SuppressWarnings("serial")
 public class BinExpr extends Expr {
     /* operator must be either of:
      * ||, &&, |, ^, &, ==, !=, <=, >=, <, >,

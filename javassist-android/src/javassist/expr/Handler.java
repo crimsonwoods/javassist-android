@@ -109,7 +109,6 @@ public class Handler extends Expr {
     public void insertBefore(String src) throws CannotCompileException {
         edited = true;
 
-        ConstPool cp = getConstPool();
         CodeAttribute ca = iterator.get();
         Javac jv = new Javac(thisClass);
         Bytecode b = jv.getBytecode();

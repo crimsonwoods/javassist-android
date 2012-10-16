@@ -19,7 +19,8 @@ package javassist.compiler;
 import java.util.HashMap;
 import javassist.compiler.ast.Declarator;
 
-public final class SymbolTable extends HashMap {
+@SuppressWarnings("serial")
+public final class SymbolTable extends HashMap<String, Declarator> {
     private SymbolTable parent;
 
     public SymbolTable() { this(null); }

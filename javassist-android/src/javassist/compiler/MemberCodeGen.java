@@ -83,13 +83,13 @@ public class MemberCodeGen extends CodeGen {
     }
 
     static class JsrHook extends ReturnHook {
-        ArrayList jsrList;
+        ArrayList<int[]> jsrList;
         CodeGen cgen;
         int var;
 
         JsrHook(CodeGen gen) {
             super(gen);
-            jsrList = new ArrayList();
+            jsrList = new ArrayList<int[]>();
             cgen = gen;
             var = -1;
         }
@@ -194,7 +194,7 @@ public class MemberCodeGen extends CodeGen {
 
         ASTList catchList = (ASTList)st.getRight().getLeft();
         Stmnt finallyBlock = (Stmnt)st.getRight().getRight().getLeft();
-        ArrayList gotoList = new ArrayList(); 
+        ArrayList<Integer> gotoList = new ArrayList<Integer>(); 
 
         JsrHook jsrHook = null;
         if (finallyBlock != null)
@@ -209,7 +209,7 @@ public class MemberCodeGen extends CodeGen {
         boolean tryNotReturn = !hasReturned;
         if (tryNotReturn) {
             bc.addOpcode(Opcode.GOTO);
-            gotoList.add(new Integer(bc.currentPc()));
+            gotoList.add(Integer.valueOf(bc.currentPc()));
             bc.addIndex(0);   // correct later
         }
 
@@ -235,7 +235,7 @@ public class MemberCodeGen extends CodeGen {
 
             if (!hasReturned) {
                 bc.addOpcode(Opcode.GOTO);
-                gotoList.add(new Integer(bc.currentPc()));
+                gotoList.add(Integer.valueOf(bc.currentPc()));
                 bc.addIndex(0);   // correct later
                 tryNotReturn = true;
             }
@@ -270,13 +270,13 @@ public class MemberCodeGen extends CodeGen {
     /**
      * Adds a finally clause for earch return statement.
      */
-    private void addFinally(ArrayList returnList, Stmnt finallyBlock)
+    private void addFinally(ArrayList<int[]> returnList, Stmnt finallyBlock)
         throws CompileError
     {
         Bytecode bc = bytecode;
         int n = returnList.size();
         for (int i = 0; i < n; ++i) {
-            final int[] ret = (int[])returnList.get(i);
+            final int[] ret = returnList.get(i);
             int pc = ret[0];
             bc.write16bit(pc, bc.currentPc() - pc + 1);
             ReturnHook hook = new JsrHook2(this, ret);

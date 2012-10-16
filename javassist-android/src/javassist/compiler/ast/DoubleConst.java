@@ -22,6 +22,7 @@ import javassist.compiler.TokenId;
 /**
  * Double constant.
  */
+@SuppressWarnings("serial")
 public class DoubleConst extends ASTree {
     protected double value;
     protected int type;

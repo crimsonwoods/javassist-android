@@ -22,6 +22,7 @@ import javassist.compiler.CompileError;
 /**
  * Expression.
  */
+@SuppressWarnings("serial")
 public class Expr extends ASTList implements TokenId {
     /* operator must be either of:
      * (unary) +, (unary) -, ++, --, !, ~,

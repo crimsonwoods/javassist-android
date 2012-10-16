@@ -32,7 +32,8 @@ public class Lex implements TokenId {
     private Token lookAheadTokens;
 
     private String input;
-    private int position, maxlen, lineNumber;
+    @SuppressWarnings("unused")
+	private int position, maxlen, lineNumber;
 
     /**
      * Constructs a lexical analyzer.
@@ -514,10 +515,6 @@ public class Lex implements TokenId {
     private static boolean isBlank(int c) {
         return c == ' ' || c == '\t' || c == '\f' || c == '\r'
             || c == '\n';
-    }
-
-    private static boolean isDigit(int c) {
-        return '0' <= c && c <= '9';
     }
 
     private void ungetc(int c) {

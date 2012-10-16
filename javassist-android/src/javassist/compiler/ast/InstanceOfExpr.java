@@ -21,6 +21,7 @@ import javassist.compiler.CompileError;
 /**
  * Instanceof expression.
  */
+@SuppressWarnings("serial")
 public class InstanceOfExpr extends CastExpr {
     public InstanceOfExpr(ASTList className, int dim, ASTree expr) {
         super(className, dim, expr);

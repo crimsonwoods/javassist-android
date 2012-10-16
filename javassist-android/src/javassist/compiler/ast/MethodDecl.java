@@ -18,6 +18,7 @@ package javassist.compiler.ast;
 
 import javassist.compiler.CompileError;
 
+@SuppressWarnings("serial")
 public class MethodDecl extends ASTList {
     public static final String initName = "<init>";
 

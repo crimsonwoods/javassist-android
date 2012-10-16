@@ -22,6 +22,7 @@ import javassist.compiler.CompileError;
 /**
  * New Expression.
  */
+@SuppressWarnings("serial")
 public class NewExpr extends ASTList implements TokenId {
     protected boolean newArray;
     protected int arrayType;

@@ -21,6 +21,7 @@ import javassist.compiler.CompileError;
 /**
  * Array initializer such as <code>{ 1, 2, 3 }</code>.
  */
+@SuppressWarnings("serial")
 public class ArrayInit extends ASTList {
     public ArrayInit(ASTree firstElement) {
         super(firstElement);

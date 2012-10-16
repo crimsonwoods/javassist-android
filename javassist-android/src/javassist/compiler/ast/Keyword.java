@@ -21,6 +21,7 @@ import javassist.compiler.CompileError;
 /**
  * Keyword.
  */
+@SuppressWarnings("serial")
 public class Keyword extends ASTree {
     protected int tokenId;
 

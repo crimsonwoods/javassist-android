@@ -22,6 +22,7 @@ import javassist.compiler.CompileError;
 /**
  * Cast expression.
  */
+@SuppressWarnings("serial")
 public class CastExpr extends ASTList implements TokenId {
     protected int castType;
     protected int arrayDim;

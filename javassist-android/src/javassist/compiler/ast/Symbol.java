@@ -21,6 +21,7 @@ import javassist.compiler.CompileError;
 /**
  * Identifier.
  */
+@SuppressWarnings("serial")
 public class Symbol extends ASTree {
     protected String identifier;
 

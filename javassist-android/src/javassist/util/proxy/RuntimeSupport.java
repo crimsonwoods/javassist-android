@@ -30,7 +30,8 @@ public class RuntimeSupport {
      */
     public static MethodHandler default_interceptor = new DefaultMethodHandler();
 
-    static class DefaultMethodHandler implements MethodHandler, Serializable {
+    @SuppressWarnings("serial")
+	static class DefaultMethodHandler implements MethodHandler, Serializable {
         public Object invoke(Object self, Method m,
                              Method proceed, Object[] args)
             throws Exception
@@ -80,7 +81,7 @@ public class RuntimeSupport {
      * @throws RuntimeException     if the method is not found.
      */
     public static Method findSuperMethod(Object self, String name, String desc) {
-        Class clazz = self.getClass();
+        Class<?> clazz = self.getClass();
         Method m = findSuperMethod2(clazz.getSuperclass(), name, desc);
         if (m == null)
             m = searchInterfaces(clazz, name, desc);
@@ -96,12 +97,12 @@ public class RuntimeSupport {
                 + " in " + self.getClass().getName());
     }
 
-    private static Method findSuperMethod2(Class clazz, String name, String desc) {
+    private static Method findSuperMethod2(Class<?> clazz, String name, String desc) {
         Method m = findMethod2(clazz, name, desc);
         if (m != null)
             return m; 
 
-        Class superClass = clazz.getSuperclass();
+        Class<?> superClass = clazz.getSuperclass();
         if (superClass != null) {
             m = findSuperMethod2(superClass, name, desc);
             if (m != null)
@@ -111,9 +112,9 @@ public class RuntimeSupport {
         return searchInterfaces(clazz, name, desc);
     }
 
-    private static Method searchInterfaces(Class clazz, String name, String desc) {
+    private static Method searchInterfaces(Class<?> clazz, String name, String desc) {
         Method m = null;
-        Class[] interfaces = clazz.getInterfaces();
+        Class<?>[] interfaces = clazz.getInterfaces();
         for (int i = 0; i < interfaces.length; i++) {
             m = findSuperMethod2(interfaces[i], name, desc);
             if (m != null)
@@ -123,7 +124,7 @@ public class RuntimeSupport {
         return m;
     }
 
-    private static Method findMethod2(Class clazz, String name, String desc) {
+    private static Method findMethod2(Class<?> clazz, String name, String desc) {
         Method[] methods = SecurityActions.getDeclaredMethods(clazz);
         int n = methods.length;
         for (int i = 0; i < n; i++)
@@ -138,7 +139,7 @@ public class RuntimeSupport {
      * Makes a descriptor for a given method.
      */
     public static String makeDescriptor(Method m) {
-        Class[] params = m.getParameterTypes();
+        Class<?>[] params = m.getParameterTypes();
         return makeDescriptor(params, m.getReturnType());
     }
 
@@ -148,7 +149,7 @@ public class RuntimeSupport {
      * @param params    parameter types.
      * @param retType   return type.
      */
-    public static String makeDescriptor(Class[] params, Class retType) {
+    public static String makeDescriptor(Class<?>[] params, Class<?> retType) {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append('(');
         for (int i = 0; i < params.length; i++)
@@ -167,13 +168,13 @@ public class RuntimeSupport {
      * @param params    the descriptor of parameter types.
      * @param retType   return type.
      */
-    public static String makeDescriptor(String params, Class retType) {
+    public static String makeDescriptor(String params, Class<?> retType) {
         StringBuffer sbuf = new StringBuffer(params);
         makeDesc(sbuf, retType);
         return sbuf.toString();
     }
 
-    private static void makeDesc(StringBuffer sbuf, Class type) {
+    private static void makeDesc(StringBuffer sbuf, Class<?> type) {
         if (type.isArray()) {
             sbuf.append('[');
             makeDesc(sbuf, type.getComponentType());
@@ -215,7 +216,7 @@ public class RuntimeSupport {
     public static SerializedProxy makeSerializedProxy(Object proxy)
         throws java.io.InvalidClassException
     {
-        Class clazz = proxy.getClass();
+        Class<?> clazz = proxy.getClass();
 
         MethodHandler methodHandler = null;
         if (proxy instanceof ProxyObject)

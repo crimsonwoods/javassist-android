@@ -36,7 +36,8 @@ public class JvstCodeGen extends MemberCodeGen {
     private CtClass dollarType = null;
     CtClass returnType = null;
     String returnCastName = null;
-    private String returnVarName = null;        // null if $_ is not used.
+    @SuppressWarnings("unused")
+	private String returnVarName = null;        // null if $_ is not used.
     public static final String wrapperCastName = "$w";
     String proceedName = null;
     public static final String cflowName = "$cflow";

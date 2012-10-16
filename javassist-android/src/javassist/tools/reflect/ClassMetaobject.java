@@ -39,6 +39,7 @@ import java.io.ObjectOutputStream;
  * @see javassist.tools.reflect.Metaobject
  * @see javassist.tools.reflect.Metalevel
  */
+@SuppressWarnings("serial")
 public class ClassMetaobject implements Serializable {
     /**
      * The base-level methods controlled by a metaobject
@@ -48,8 +49,8 @@ public class ClassMetaobject implements Serializable {
     static final String methodPrefix = "_m_";
     static final int methodPrefixLen = 3;
 
-    private Class javaClass;
-    private Constructor[] constructors;
+    private Class<?> javaClass;
+    private Constructor<?>[] constructors;
     private Method[] methods;
 
     /**
@@ -95,7 +96,7 @@ public class ClassMetaobject implements Serializable {
         methods = null;
     }
 
-    private Class getClassObject(String name) throws ClassNotFoundException {
+    private Class<?> getClassObject(String name) throws ClassNotFoundException {
         if (useContextClassLoader)
             return Thread.currentThread().getContextClassLoader()
                    .loadClass(name);
@@ -106,7 +107,7 @@ public class ClassMetaobject implements Serializable {
     /**
      * Obtains the <code>java.lang.Class</code> representing this class.
      */
-    public final Class getJavaClass() {
+    public final Class<?> getJavaClass() {
         return javaClass;
     }
 
@@ -162,7 +163,7 @@ public class ClassMetaobject implements Serializable {
      * <p>Every subclass of this class should redefine this method.
      */
     public Object trapFieldRead(String name) {
-        Class jc = getJavaClass();
+        Class<?> jc = getJavaClass();
         try {
             return jc.getField(name).get(null);
         }
@@ -182,7 +183,7 @@ public class ClassMetaobject implements Serializable {
      * <p>Every subclass of this class should redefine this method.
      */
     public void trapFieldWrite(String name, Object value) {
-        Class jc = getJavaClass();
+        Class<?> jc = getJavaClass();
         try {
             jc.getField(name).set(null, value);
         }
@@ -251,7 +252,7 @@ public class ClassMetaobject implements Serializable {
         if (methods != null)
             return methods;
 
-        Class baseclass = getJavaClass();
+        Class<?> baseclass = getJavaClass();
         Method[] allmethods = baseclass.getDeclaredMethods();
         int n = allmethods.length;
         int[] index = new int[n];
@@ -320,7 +321,7 @@ public class ClassMetaobject implements Serializable {
      * formal parameter types of the method specified
      * by <code>identifier</code>.
      */
-    public final Class[] getParameterTypes(int identifier) {
+    public final Class<?>[] getParameterTypes(int identifier) {
         return getReflectiveMethods()[identifier].getParameterTypes();
     }
 
@@ -328,7 +329,7 @@ public class ClassMetaobject implements Serializable {
      * Returns a <code>Class</code> objects representing the
      * return type of the method specified by <code>identifier</code>.
      */
-    public final Class getReturnType(int identifier) {
+    public final Class<?> getReturnType(int identifier) {
         return getReflectiveMethods()[identifier].getReturnType();
     }
 
@@ -350,7 +351,7 @@ public class ClassMetaobject implements Serializable {
      * 
      * @see ClassMetaobject#getMethod(int)
      */
-    public final int getMethodIndex(String originalName, Class[] argTypes)
+    public final int getMethodIndex(String originalName, Class<?>[] argTypes)
         throws NoSuchMethodException
     {
         Method[] mthds = getReflectiveMethods();

@@ -19,6 +19,7 @@ package javassist.tools.reflect;
 /**
  * Signals that <code>ClassMetaobject.newInstance()</code> fails.
  */
+@SuppressWarnings("serial")
 public class CannotCreateException extends Exception {
     public CannotCreateException(String s) {
         super(s);

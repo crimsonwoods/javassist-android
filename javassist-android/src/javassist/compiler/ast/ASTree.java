@@ -24,6 +24,7 @@ import javassist.compiler.CompileError;
  * a binary tree.  If the node is a leaf node, both <code>getLeft()</code>
  * and <code>getRight()</code> returns null.
  */
+@SuppressWarnings("serial")
 public abstract class ASTree implements Serializable {
     public ASTree getLeft() { return null; }
 

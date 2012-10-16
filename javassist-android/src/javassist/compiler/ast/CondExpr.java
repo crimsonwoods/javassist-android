@@ -21,6 +21,7 @@ import javassist.compiler.CompileError;
 /**
  * Conditional expression.
  */
+@SuppressWarnings("serial")
 public class CondExpr extends ASTList {
     public CondExpr(ASTree cond, ASTree thenp, ASTree elsep) {
         super(cond, new ASTList(thenp, new ASTList(elsep)));

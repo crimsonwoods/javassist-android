@@ -21,6 +21,7 @@ import javassist.compiler.CompileError;
 /**
  * Variable.
  */
+@SuppressWarnings("serial")
 public class Variable extends Symbol {
     protected Declarator declarator;
 
