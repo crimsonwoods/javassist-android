@@ -1,13 +1,10 @@
 package org.jamruby.javassistsample;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 import dalvik.system.DexClassLoader;
 
-import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -17,62 +14,61 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-    @Override
+    private static final String DEX_FILE_NAME_MYCLASSES = "myclasses.dex";
+
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        final ClassPool cp = ClassPool.getDefault(getApplicationContext());
-        final CtClass cls = cp.makeClass("hoge");
-        try {
-        	final CtConstructor ctor = new CtConstructor(null, cls);
-        	ctor.setBody("{}");
-        	cls.addConstructor(ctor);
-			final CtMethod m1 = CtMethod.make("java.lang.String toString() { return \"hoge.toString() is called.\"; }", cls);
-			cls.addMethod(m1);
-			cls.writeFile(getFilesDir().getAbsolutePath());
-		} catch (CannotCompileException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        final TextView view = (TextView)findViewById(R.id.textview_title);
+        final File dexFile = new File(getCacheDir(), DEX_FILE_NAME_MYCLASSES);
         
-        final DexFile df = new DexFile();
-        final String dexFilePath = new File(getCacheDir(), "myclasses.dex").getAbsolutePath();
-        df.addClass(new File(getFilesDir(), "hoge.class"));
-        try {
-			df.writeFile(dexFilePath);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        if (!dexFile.exists()) {
+        	// generate DEX and ODEX file.
+        	try {
+		        final ClassPool cp = ClassPool.getDefault(getApplicationContext());
+		        final CtClass cls = cp.makeClass("hoge");
+	        	final CtConstructor ctor = new CtConstructor(null, cls);
+	        	ctor.setBody("{}");
+	        	cls.addConstructor(ctor);
+				final CtMethod m1 = CtMethod.make(
+						"java.lang.String toString() { return \"hoge.toString() is called.\"; }",
+						cls);
+				cls.addMethod(m1);
+				cls.writeFile(getFilesDir().getAbsolutePath());
+				
+		        final DexFile df = new DexFile();
+		        final String dexFilePath = new File(getCacheDir(), DEX_FILE_NAME_MYCLASSES).getAbsolutePath();
+		        df.addClass(new File(getFilesDir(), "hoge.class"));
+		        df.writeFile(dexFilePath);
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        		Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        	}
+        }
         
-        final DexClassLoader dcl = new DexClassLoader(dexFilePath, getFilesDir().getAbsolutePath(), getApplicationInfo().nativeLibraryDir, getClassLoader());
-        String title = null;
-        try {
-			final Class<?> class_hoge = dcl.loadClass("hoge");
-			final Constructor<?> ctor = class_hoge.getConstructor(new Class<?>[0]);
-			final Object obj = ctor.newInstance(new Object[0]);
-			title = obj.toString();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		}
-        
-        if (null != title) {
-        	TextView view = (TextView)findViewById(R.id.textview_title);
-			view.setText(title);
+        if (dexFile.exists()) {
+        	try {
+		        final DexClassLoader dcl = new DexClassLoader(
+		        		dexFile.getAbsolutePath(),
+		        		getFilesDir().getAbsolutePath(),
+		        		getApplicationInfo().nativeLibraryDir,
+		        		getClassLoader());
+		        String title = null;
+	        	final Class<?> class_hoge = dcl.loadClass("hoge");
+				final Constructor<?> ctor = class_hoge.getConstructor(new Class<?>[0]);
+				final Object obj = ctor.newInstance(new Object[0]);
+				title = obj.toString();
+				view.setText(title);
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        		Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        	}
         }
     }
 
