@@ -15,7 +15,7 @@ public class DexFile {
 	private final DexOptions dex_options = new DexOptions();
 	
 	public DexFile() {
-		file = new com.android.dx.dex.file.DexFile(dex_options);
+		this.file = new com.android.dx.dex.file.DexFile(dex_options);
 	}
 	
 	public void addClass(File classFile) {

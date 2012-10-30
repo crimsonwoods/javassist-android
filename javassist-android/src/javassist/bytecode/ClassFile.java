@@ -134,7 +134,7 @@ public final class ClassFile {
         else
             accessFlags = AccessFlag.SUPER;
 
-        initSuperclass(superclass);
+        initSuperclass(classname, superclass);
         interfaces = null;
         fields = new ArrayList<FieldInfo>();
         methods = new ArrayList<MethodInfo>();
@@ -144,11 +144,15 @@ public final class ClassFile {
         attributes.add(new SourceFileAttribute(constPool,
                 getSourcefileName(thisclassname)));
     }
-
-    private void initSuperclass(String superclass) {
+    
+    private void initSuperclass(String classname, String superclass) {
         if (superclass != null) {
             this.superClass = constPool.addClassInfo(superclass);
             cachedSuperclass = superclass;
+        }
+        else if ("java.lang.Object".equals(classname)) {
+        	this.superClass = 0;
+        	cachedSuperclass = null;
         }
         else {
             this.superClass = constPool.addClassInfo("java.lang.Object");

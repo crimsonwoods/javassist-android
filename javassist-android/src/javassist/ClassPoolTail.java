@@ -26,6 +26,7 @@ import android.content.Context;
 
 import javassist.android.DalvikClassClassPath;
 import javassist.android.DalvikClassPath;
+import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
 import javassist.bytecode.FieldInfo;
 import javassist.bytecode.MethodInfo;
@@ -343,6 +344,38 @@ final class ClassPoolTail {
                 list = list.next;
             else
                 return ins;
+        }
+
+        if (error != null)
+            throw error;
+        else
+            return null;    // not found
+    }
+    
+    ClassFile getClassFile(String classname) throws NotFoundException, IOException {
+    	ClassPathList list = pathList;
+        InputStream ins = null;
+        NotFoundException error = null;
+        while (list != null) {
+            try {
+            	if (list.path instanceof DalvikClassPath) {
+            		final ClassFile cf = ((DalvikClassPath)list.path).getClassFile(classname);
+            		if (null != cf) {
+            			return cf;
+            		}
+            	} else {
+            		ins = list.path.openClassfile(classname);
+            	}
+            }
+            catch (NotFoundException e) {
+                if (error == null)
+                    error = e;
+            }
+
+            if (ins == null)
+                list = list.next;
+			else
+				return new ClassFile(new DataInputStream(ins));
         }
 
         if (error != null)

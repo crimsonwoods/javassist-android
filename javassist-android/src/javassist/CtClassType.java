@@ -17,7 +17,6 @@
 package javassist;
 
 import java.lang.ref.WeakReference;
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -182,14 +181,11 @@ class CtClassType extends CtClass {
             }
         }
 
-        InputStream fin = null;
         try {
-            fin = classPool.openClassfile(getName());
-            if (fin == null)
+            final ClassFile cf = classPool.getClassFile(getName());
+            if (cf == null)
                 throw new NotFoundException(getName());
 
-            fin = new BufferedInputStream(fin);
-            ClassFile cf = new ClassFile(new DataInputStream(fin));
             if (!cf.getName().equals(qualifiedName))
                 throw new RuntimeException("cannot find " + qualifiedName + ": " 
                         + cf.getName() + " found in "
@@ -203,13 +199,6 @@ class CtClassType extends CtClass {
         }
         catch (IOException e) {
             throw new RuntimeException(e.toString(), e);
-        }
-        finally {
-            if (fin != null)
-                try {
-                    fin.close();
-                }
-                catch (IOException e) {}
         }
     }
 

@@ -34,6 +34,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import android.content.Context;
+import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
 import javassist.bytecode.Descriptor;
 import javassist.bytecode.FieldInfo;
@@ -657,6 +658,10 @@ public class ClassPool {
         return source.openClassfile(classname);
     }
 
+    ClassFile getClassFile(String classname) throws NotFoundException, IOException {
+    	return source.getClassFile(classname);
+    }
+    
     void writeClassfile(String classname, OutputStream out)
         throws NotFoundException, IOException, CannotCompileException
     {
