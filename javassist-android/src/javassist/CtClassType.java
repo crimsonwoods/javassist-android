@@ -50,7 +50,6 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.compiler.AccessorMaker;
 import javassist.compiler.CompileError;
 import javassist.compiler.Javac;
-import javassist.environment.Environment;
 import javassist.expr.ExprEditor;
 
 /**
@@ -821,23 +820,9 @@ class CtClassType extends CtClass {
         return cache;
     }
     
-    private List<FieldInfo> getClassFields(ConstPool cp) {
-    	return classPool.getClassFields(getName(), cp);
-    }
-    
-    private List<MethodInfo> getClassMethods(ConstPool cp) {
-    	return classPool.getClassMethods(getName(), cp);
-    }
-
     private void makeFieldCache(CtMember.Cache cache) {
-    	List<FieldInfo> list;
-    	if (Environment.isRunningOnDalvikVM()) {
-    		final ConstPool cp = (null == classfile) ? new ConstPool(getName()) : classfile.getConstPool(); 
-    		list = getClassFields(cp);
-    	} else {
-    		list = getClassFile2().getFields();
-    	}
-        if (null == list) {
+    	List<FieldInfo> list = getClassFile2().getFields();
+    	if (null == list) {
         	return;
         }
         int n = list.size();
@@ -849,14 +834,8 @@ class CtClassType extends CtClass {
     }
 
     private void makeBehaviorCache(CtMember.Cache cache) {
-    	List<MethodInfo> list;
-    	if (Environment.isRunningOnDalvikVM()) {
-    		final ConstPool cp = (null == classfile) ? new ConstPool(getName()) : classfile.getConstPool(); 
-    		list = getClassMethods(cp);
-    	} else {
-    		list = getClassFile2().getMethods();
-    	}
-        if (null == list) {
+    	List<MethodInfo> list = getClassFile2().getMethods();
+    	if (null == list) {
         	return;
         }
         int n = list.size();
